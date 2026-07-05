@@ -90,7 +90,6 @@ export function clearAuthToken(): void {
  */
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const { data } = await apiClient.post<LoginResponse>('/auth/login', credentials)
-
   // Only store token if 2FA is not required
   if (!isTotp2FARequired(data)) {
     setAuthToken(data.access_token)
