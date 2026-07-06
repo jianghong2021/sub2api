@@ -9,9 +9,9 @@
     <div v-else v-html="homeContent"></div>
   </div>
 
-  <div v-else class="relative flex min-h-screen flex-col bg-dark-950">
-    <!-- ===== Animated Background Layer ===== -->
-    <div class="pointer-events-none fixed inset-0 overflow-hidden">
+  <div v-else class="relative flex min-h-screen flex-col bg-gray-50 dark:bg-dark-950">
+    <!-- ===== Animated Background Layer (dark only) ===== -->
+    <div class="pointer-events-none fixed inset-0 overflow-hidden hidden dark:block">
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.08),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.05),transparent_60%)]"></div>
       <!-- Constellation dots -->
       <div class="constellation-dot dot-1"></div><div class="constellation-dot dot-2"></div>
@@ -39,23 +39,32 @@
     </div>
 
     <!-- ===== Sticky Header ===== -->
-    <header class="sticky top-0 z-50 border-b border-white/5 bg-dark-950/80 px-6 py-3 backdrop-blur-xl transition-all duration-300" :class="{ 'shadow-lg shadow-primary-500/5': scrolled }">
+    <header class="sticky top-0 z-50 border-b border-gray-200 bg-white/80 px-6 py-3 backdrop-blur-xl transition-all duration-300 dark:border-white/5 dark:bg-dark-950/80" :class="{ 'shadow-lg shadow-primary-500/5': scrolled }">
       <nav class="mx-auto flex max-w-6xl items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 p-0.5 shadow-lg shadow-primary-500/30">
-            <div class="flex h-full w-full items-center justify-center rounded-[10px] bg-dark-900">
+            <div class="flex h-full w-full items-center justify-center rounded-[10px] bg-white dark:bg-dark-900">
               <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-6 w-6 object-contain" />
             </div>
           </div>
-          <span class="hidden text-sm font-semibold text-white sm:block">{{ siteName }}</span>
+          <span class="hidden text-sm font-semibold text-gray-900 sm:block dark:text-white">{{ siteName }}</span>
         </div>
         <div class="flex items-center gap-1.5">
-          <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="rounded-lg p-2 text-dark-400 transition-colors hover:bg-white/5 hover:text-white" :title="t('home.viewDocs')"><Icon name="book" size="md" /></a>
+          <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-dark-400 dark:hover:bg-white/5 dark:hover:text-white" :title="t('home.viewDocs')"><Icon name="book" size="md" /></a>
+          <!-- Theme Toggle -->
+          <button
+            @click="toggleTheme"
+            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
+            :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+          >
+            <Icon v-if="isDark" name="sun" size="md" />
+            <Icon v-else name="moon" size="md" />
+          </button>
           <router-link v-if="isAuthenticated" :to="dashboardPath" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 px-4 py-1.5 text-xs font-medium text-white shadow-lg shadow-primary-500/30 transition-all hover:shadow-primary-500/50">
             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-semibold text-white">{{ userInitial }}</span>
             <span>{{ t('home.dashboard') }}</span>
           </router-link>
-          <router-link v-else to="/login" class="inline-flex items-center rounded-full bg-white/5 px-4 py-1.5 text-xs font-medium text-white ring-1 ring-white/10 transition-all hover:bg-white/10 hover:ring-white/20">{{ t('home.login') }}</router-link>
+          <router-link v-else to="/login" class="inline-flex items-center rounded-full bg-gray-100 px-4 py-1.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200 transition-all hover:bg-gray-200 hover:ring-gray-300 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 dark:hover:ring-white/20">{{ t('home.login') }}</router-link>
         </div>
       </nav>
     </header>
@@ -77,9 +86,9 @@
                 AI API Gateway
               </div>
               <h1 class="glitch-text group relative mb-4 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl" data-text="siteName">
-                <span class="bg-gradient-to-r from-white via-white to-primary-200 bg-clip-text text-transparent">{{ siteName }}</span>
+                <span class="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-white dark:via-white dark:to-primary-200">{{ siteName }}</span>
               </h1>
-              <p class="mb-10 text-lg text-dark-400 md:text-xl max-w-xl mx-auto lg:mx-0 typewriter">
+              <p class="mb-10 text-lg text-gray-500 md:text-xl max-w-xl mx-auto lg:mx-0 typewriter dark:text-dark-400">
                 {{ siteSubtitle }}
               </p>
               <div class="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
@@ -88,7 +97,7 @@
                   <span class="relative z-10">{{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}</span>
                   <Icon name="arrowRight" size="md" class="relative z-10" :stroke-width="2" />
                 </router-link>
-                <a v-if="docUrl" :href="docUrl" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm font-medium text-dark-300 transition-all hover:border-white/20 hover:text-white"><Icon name="book" size="sm" />{{ t('home.viewDocs') }}</a>
+                <a v-if="docUrl" :href="docUrl" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-6 py-3 text-sm font-medium text-gray-500 transition-all hover:border-gray-300 hover:text-gray-900 dark:border-white/10 dark:text-dark-300 dark:hover:border-white/20 dark:hover:text-white"><Icon name="book" size="sm" />{{ t('home.viewDocs') }}</a>
               </div>
             </div>
 
@@ -124,32 +133,32 @@
         <div class="mx-auto max-w-6xl">
           <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
             <div class="tag-pill group inline-flex items-center gap-2.5 rounded-full border border-primary-500/20 bg-primary-500/5 px-5 py-2.5 backdrop-blur-sm transition-all hover:border-primary-500/30 hover:bg-primary-500/10 hover:shadow-lg hover:shadow-primary-500/5">
-              <Icon name="bolt" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-dark-200">{{ t('home.tags.subscriptionToApi') }}</span>
+              <Icon name="bolt" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.tags.subscriptionToApi') }}</span>
             </div>
             <div class="tag-pill group inline-flex items-center gap-2.5 rounded-full border border-primary-500/20 bg-primary-500/5 px-5 py-2.5 backdrop-blur-sm transition-all hover:border-primary-500/30 hover:bg-primary-500/10 hover:shadow-lg hover:shadow-primary-500/5">
-              <Icon name="shield" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-dark-200">{{ t('home.tags.stickySession') }}</span>
+              <Icon name="shield" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.tags.stickySession') }}</span>
             </div>
             <div class="tag-pill group inline-flex items-center gap-2.5 rounded-full border border-primary-500/20 bg-primary-500/5 px-5 py-2.5 backdrop-blur-sm transition-all hover:border-primary-500/30 hover:bg-primary-500/10 hover:shadow-lg hover:shadow-primary-500/5">
-              <Icon name="chart" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-dark-200">{{ t('home.tags.realtimeBilling') }}</span>
+              <Icon name="chart" size="sm" class="text-primary-400" /><span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.tags.realtimeBilling') }}</span>
             </div>
           </div>
 
           <!-- Animated Stats Row -->
           <div class="grid gap-4 sm:grid-cols-3">
-            <div class="stat-glow group relative overflow-hidden rounded-xl border border-white/5 bg-dark-800/30 px-6 py-5 text-center backdrop-blur-sm">
+            <div class="stat-glow group relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-6 py-5 text-center backdrop-blur-sm dark:border-white/5 dark:bg-dark-800/30">
               <div class="absolute inset-0 bg-gradient-to-b from-primary-500/0 via-primary-500/0 to-primary-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-              <div class="relative text-2xl font-bold tracking-wider text-white"><span class="stat-value" data-target="99.9">0</span>%</div>
-              <div class="relative mt-1 text-xs text-dark-400">Uptime SLA</div>
+              <div class="relative text-2xl font-bold tracking-wider text-gray-900 dark:text-white"><span class="stat-value" data-target="99.9">0</span>%</div>
+              <div class="relative mt-1 text-xs text-gray-500 dark:text-dark-400">Uptime SLA</div>
             </div>
-            <div class="stat-glow group relative overflow-hidden rounded-xl border border-white/5 bg-dark-800/30 px-6 py-5 text-center backdrop-blur-sm">
+            <div class="stat-glow group relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-6 py-5 text-center backdrop-blur-sm dark:border-white/5 dark:bg-dark-800/30">
               <div class="absolute inset-0 bg-gradient-to-b from-primary-500/0 via-primary-500/0 to-primary-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-              <div class="relative text-2xl font-bold tracking-wider text-white"><span class="stat-value" data-target="50">0</span>ms</div>
-              <div class="relative mt-1 text-xs text-dark-400">Avg. Latency</div>
+              <div class="relative text-2xl font-bold tracking-wider text-gray-900 dark:text-white"><span class="stat-value" data-target="50">0</span>ms</div>
+              <div class="relative mt-1 text-xs text-gray-500 dark:text-dark-400">Avg. Latency</div>
             </div>
-            <div class="stat-glow group relative overflow-hidden rounded-xl border border-white/5 bg-dark-800/30 px-6 py-5 text-center backdrop-blur-sm">
+            <div class="stat-glow group relative overflow-hidden rounded-xl border border-gray-200 bg-gray-50 px-6 py-5 text-center backdrop-blur-sm dark:border-white/5 dark:bg-dark-800/30">
               <div class="absolute inset-0 bg-gradient-to-b from-primary-500/0 via-primary-500/0 to-primary-500/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
               <div class="relative text-2xl font-bold bg-gradient-to-r from-primary-400 to-primary-200 bg-clip-text text-transparent">∞</div>
-              <div class="relative mt-1 text-xs text-dark-400">Auto Scaling</div>
+              <div class="relative mt-1 text-xs text-gray-500 dark:text-dark-400">Auto Scaling</div>
             </div>
           </div>
         </div>
@@ -160,8 +169,8 @@
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.03),transparent_60%)] pointer-events-none"></div>
         <div class="mx-auto max-w-6xl">
           <div class="mb-12 text-center">
-            <h2 class="text-3xl font-bold text-white md:text-4xl"><span class="bg-gradient-to-r from-white to-primary-200 bg-clip-text text-transparent">Core Features</span></h2>
-            <p class="mt-3 text-dark-400">Everything you need to manage AI API access</p>
+            <h2 class="text-3xl font-bold md:text-4xl"><span class="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-white dark:to-primary-200">Core Features</span></h2>
+            <p class="mt-3 text-gray-500 dark:text-dark-400">Everything you need to manage AI API access</p>
           </div>
           <div class="grid gap-6 md:grid-cols-3">
             <div v-for="(feature, idx) in features" :key="idx" ref="featureCardRefs" class="feature-card group relative overflow-hidden rounded-2xl p-7 transition-all duration-500" :class="featureCardsVisible[idx] ? 'animate-slide-up' : 'opacity-0 translate-y-6'" :style="{ animationDelay: `${idx * 0.1}s` }">
@@ -172,8 +181,8 @@
                 <Icon v-if="idx === 0" name="server" size="lg" class="text-blue-400" />
                 <svg v-else class="h-6 w-6" :class="feature.iconColor" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" v-html="feature.iconPath"></svg>
               </div>
-              <h3 class="relative mb-3 text-lg font-semibold text-white">{{ feature.title }}</h3>
-              <p class="relative text-sm leading-relaxed text-dark-400">{{ feature.desc }}</p>
+              <h3 class="relative mb-3 text-lg font-semibold text-gray-900 dark:text-white">{{ feature.title }}</h3>
+              <p class="relative text-sm leading-relaxed text-gray-500 dark:text-dark-400">{{ feature.desc }}</p>
               <div class="relative mt-4 flex items-center gap-1 text-xs font-medium text-primary-400 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2">
                 <span>Learn more</span>
                 <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
@@ -188,14 +197,14 @@
         <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary-500/[0.02] to-transparent pointer-events-none"></div>
         <div class="mx-auto max-w-6xl">
           <div class="mb-10 text-center">
-            <h2 class="mb-3 text-3xl font-bold text-white md:text-4xl"><span class="bg-gradient-to-r from-white to-primary-200 bg-clip-text text-transparent">{{ t('home.providers.title') }}</span></h2>
-            <p class="text-dark-400">{{ t('home.providers.description') }}</p>
+            <h2 class="mb-3 text-3xl font-bold md:text-4xl"><span class="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent dark:from-white dark:to-primary-200">{{ t('home.providers.title') }}</span></h2>
+            <p class="text-gray-500 dark:text-dark-400">{{ t('home.providers.description') }}</p>
           </div>
           <div class="flex flex-wrap items-center justify-center gap-4">
-            <div v-for="(provider, idx) in providers" :key="idx" class="flex items-center gap-2 rounded-xl border px-5 py-3 backdrop-blur-sm transition-all duration-300" :class="provider.active ? 'border-primary-500/20 bg-primary-500/5 ring-1 ring-primary-500/20 hover:border-primary-500/30 hover:bg-primary-500/10 hover:ring-primary-500/30 hover:-translate-y-0.5' : 'border-white/5 bg-dark-800/20 opacity-60 hover:opacity-80'">
+            <div v-for="(provider, idx) in providers" :key="idx" class="flex items-center gap-2 rounded-xl border px-5 py-3 backdrop-blur-sm transition-all duration-300" :class="provider.active ? 'border-primary-500/20 bg-primary-500/5 ring-1 ring-primary-500/20 hover:border-primary-500/30 hover:bg-primary-500/10 hover:ring-primary-500/30 hover:-translate-y-0.5' : 'border-gray-200 bg-gray-100 opacity-60 hover:opacity-80 dark:border-white/5 dark:bg-dark-800/20'">
               <div class="flex h-8 w-8 items-center justify-center rounded-lg shadow-lg" :class="provider.badge"><span class="text-xs font-bold text-white">{{ provider.initial }}</span></div>
-              <span class="text-sm font-medium" :class="provider.active ? 'text-dark-200' : 'text-dark-300'">{{ provider.name }}</span>
-              <span class="rounded px-1.5 py-0.5 text-[10px] font-medium" :class="provider.active ? 'bg-primary-500/20 text-primary-400' : 'bg-dark-700 text-dark-400'">{{ provider.active ? t('home.providers.supported') : t('home.providers.soon') }}</span>
+              <span class="text-sm font-medium" :class="provider.active ? 'text-gray-700 dark:text-dark-200' : 'text-gray-400 dark:text-dark-300'">{{ provider.name }}</span>
+              <span class="rounded px-1.5 py-0.5 text-[10px] font-medium" :class="provider.active ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-200 text-gray-500 dark:bg-dark-700 dark:text-dark-400'">{{ provider.active ? t('home.providers.supported') : t('home.providers.soon') }}</span>
             </div>
           </div>
         </div>
@@ -203,14 +212,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="relative z-10 border-t border-white/5 px-6 py-10">
+    <footer class="relative z-10 border-t border-gray-200 px-6 py-10 dark:border-white/5">
       <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
         <div class="flex items-center gap-3">
-          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 p-0.5"><div class="flex h-full w-full items-center justify-center rounded-md bg-dark-900"><img :src="siteLogo || '/logo.png'" alt="" class="h-4 w-4 object-contain" /></div></div>
-          <span class="text-xs text-dark-500">&copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}</span>
+          <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 p-0.5"><div class="flex h-full w-full items-center justify-center rounded-md bg-white dark:bg-dark-900"><img :src="siteLogo || '/logo.png'" alt="" class="h-4 w-4 object-contain" /></div></div>
+          <span class="text-xs text-gray-400 dark:text-dark-500">&copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}</span>
         </div>
         <div class="flex items-center gap-6">
-          <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="text-xs text-dark-500 transition-colors hover:text-white">{{ t('home.docs') }}</a>
+          <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 transition-colors hover:text-gray-900 dark:text-dark-500 dark:hover:text-white">{{ t('home.docs') }}</a>
         </div>
       </div>
     </footer>
@@ -252,7 +261,6 @@ const scrolled = ref(false)
 const heroTextRef = ref<HTMLElement | null>(null)
 const terminalRef = ref<HTMLElement | null>(null)
 const tagsSectionRef = ref<HTMLElement | null>(null)
-const featuresRef = ref<HTMLElement | null>(null)
 const providersRef = ref<HTMLElement | null>(null)
 const heroTextVisible = ref(false)
 const terminalVisible = ref(false)
@@ -260,6 +268,8 @@ const tagsVisible = ref(false)
 const providersVisible = ref(false)
 const featureCardRefs = ref<(HTMLElement | null)[]>([])
 const featureCardsVisible = ref<boolean[]>([])
+// Theme
+const isDark = ref(document.documentElement.classList.contains('dark'))
 
 const features = computed(() => [
   { title: t('home.features.unifiedGateway'), desc: t('home.features.unifiedGatewayDesc'), iconBg: 'bg-gradient-to-br from-blue-500/20 to-blue-600/20 ring-1 ring-blue-500/30 group-hover:ring-blue-500/50', iconColor: 'text-blue-400', iconPath: '' },
@@ -274,13 +284,6 @@ const providers = computed(() => [
   { name: t('home.providers.antigravity'), initial: 'A', badge: 'bg-gradient-to-br from-rose-500 to-pink-600 shadow-rose-500/20', active: true },
   { name: t('home.providers.more'), initial: '+', badge: 'bg-gradient-to-br from-dark-600 to-dark-500', active: false }
 ])
-
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark')
-  }
-}
 
 function observeElement(el: HTMLElement | null, callback: (v: boolean) => void) {
   if (!el) return
@@ -305,8 +308,13 @@ function animateCounter(el: HTMLElement) {
   requestAnimationFrame(update)
 }
 
+function toggleTheme() {
+  isDark.value = !isDark.value
+  document.documentElement.classList.toggle('dark', isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
 onMounted(() => {
-  initTheme()
   authStore.checkAuth()
   if (!appStore.publicSettingsLoaded) appStore.fetchPublicSettings()
 
@@ -494,16 +502,25 @@ onMounted(() => {
 .terminal-window {
   position: relative;
   width: 440px;
-  background: linear-gradient(145deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.96) 100%);
+  background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 14px;
-  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.15), 0 0 30px rgba(139, 92, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
   overflow: hidden;
   transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
 }
 
+.dark .terminal-window {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.92) 0%, rgba(15, 23, 42, 0.96) 100%);
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.15), 0 0 30px rgba(139, 92, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
 .terminal-window:hover {
   transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-6px);
+  box-shadow: 0 35px 80px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.15);
+}
+
+.dark .terminal-window:hover {
   box-shadow: 0 35px 80px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(139, 92, 246, 0.25), 0 0 50px rgba(139, 92, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -511,6 +528,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   padding: 12px 16px;
+  background: rgba(241, 245, 249, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .terminal-header {
   background: rgba(30, 41, 59, 0.5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -522,7 +544,9 @@ onMounted(() => {
 .btn-minimize { background: #eab308; }
 .btn-maximize { background: #22c55e; }
 
-.terminal-title { flex: 1; text-align: center; font-size: 12px; font-family: ui-monospace, monospace; color: #64748b; margin-right: 52px; }
+.terminal-title { flex: 1; text-align: center; font-size: 12px; font-family: ui-monospace, monospace; color: #94a3b8; margin-right: 52px; }
+.dark .terminal-title { color: #64748b; }
+
 .terminal-status { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px rgba(34, 197, 94, 0.5); }
 
 .terminal-body { padding: 20px 24px; font-family: ui-monospace, 'Fira Code', monospace; font-size: 14px; line-height: 2; }
@@ -535,27 +559,44 @@ onMounted(() => {
 
 @keyframes line-appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-.code-prompt { color: #22c55e; font-weight: bold; }
-.code-cmd { color: #38bdf8; }
-.code-flag { color: #a78bfa; }
-.code-url { color: #8b5cf6; }
-.code-comment { color: #64748b; font-style: italic; }
-.code-success { color: #22c55e; background: rgba(34, 197, 94, 0.15); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-.code-response { color: #fbbf24; }
+.code-prompt { color: #16a34a; font-weight: bold; }
+.dark .code-prompt { color: #22c55e; }
+
+.code-cmd { color: #2563eb; }
+.dark .code-cmd { color: #38bdf8; }
+
+.code-flag { color: #7c3aed; }
+.dark .code-flag { color: #a78bfa; }
+
+.code-url { color: #6d28d9; }
+.dark .code-url { color: #8b5cf6; }
+
+.code-comment { color: #94a3b8; font-style: italic; }
+.dark .code-comment { color: #64748b; }
+
+.code-success { color: #16a34a; background: rgba(22, 163, 74, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.dark .code-success { color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+
+.code-response { color: #d97706; }
+.dark .code-response { color: #fbbf24; }
 
 /* Loading dots */
 .loading-dots { display: inline-flex; gap: 3px; }
-.loading-dots span { width: 4px; height: 4px; border-radius: 50%; background: #64748b; animation: dot-bounce 1.4s ease-in-out infinite; }
+.loading-dots span { width: 4px; height: 4px; border-radius: 50%; background: #94a3b8; animation: dot-bounce 1.4s ease-in-out infinite; }
+.dark .loading-dots span { background: #64748b; }
 .loading-dots span:nth-child(1) { animation-delay: 0s; }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes dot-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-4px); opacity: 1; } }
 
-.cursor { display: inline-block; width: 8px; height: 16px; background: #8b5cf6; box-shadow: 0 0 6px rgba(139, 92, 246, 0.5); animation: blink 1s step-end infinite; }
+.cursor { display: inline-block; width: 8px; height: 16px; background: #7c3aed; box-shadow: none; animation: blink 1s step-end infinite; }
+.dark .cursor { background: #8b5cf6; box-shadow: 0 0 6px rgba(139, 92, 246, 0.5); }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
-.terminal-progress { margin-top: 16px; height: 2px; background: rgba(255, 255, 255, 0.05); border-radius: 1px; overflow: hidden; }
+.terminal-progress { margin-top: 16px; height: 2px; background: rgba(0, 0, 0, 0.05); border-radius: 1px; overflow: hidden; }
+.dark .terminal-progress { background: rgba(255, 255, 255, 0.05); }
+
 .progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, transparent, #8b5cf6, #a78bfa, transparent); background-size: 200% 100%; animation: progress-scan 3s ease-in-out infinite, shimmer 2s linear infinite; }
 @keyframes progress-scan { 0% { width: 0%; } 50% { width: 100%; } 100% { width: 0%; } }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -584,9 +625,14 @@ onMounted(() => {
 
 /* ===== Feature Cards with Animated Gradient Border ===== */
 .feature-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+.dark .feature-card {
   background: rgba(15, 23, 42, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(4px);
 }
 
 .feature-card::before {
@@ -638,18 +684,4 @@ onMounted(() => {
 /* ===== Keep card height equal ===== */
 :deep(.h-13) { height: 3.25rem; }
 :deep(.w-13) { width: 3.25rem; }
-
-/* ===== Light mode overrides ===== */
-:global(.light) .terminal-window { background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
-:global(.light) .terminal-header { background: rgba(241, 245, 249, 0.8); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
-:global(.light) .terminal-title { color: #94a3b8; }
-:global(.light) .code-prompt { color: #16a34a; }
-:global(.light) .code-cmd { color: #2563eb; }
-:global(.light) .code-flag { color: #7c3aed; }
-:global(.light) .code-url { color: #6d28d9; }
-:global(.light) .code-comment { color: #94a3b8; }
-:global(.light) .code-success { color: #16a34a; background: rgba(22, 163, 74, 0.1); }
-:global(.light) .code-response { color: #d97706; }
-:global(.light) .cursor { background: #7c3aed; box-shadow: none; }
-:global(.light) .terminal-progress { background: rgba(0, 0, 0, 0.05); }
 </style>

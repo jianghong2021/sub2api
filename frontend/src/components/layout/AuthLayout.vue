@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex min-h-screen items-center justify-center overflow-hidden bg-dark-950 p-4">
+  <div class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gray-50 p-4 dark:bg-dark-950">
     <!-- Animated Background -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.08),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.05),transparent_60%)]"></div>
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Card Container -->
-      <div class="rounded-2xl border border-white/10 bg-dark-800/50 p-8 shadow-2xl shadow-primary-500/5 backdrop-blur-xl">
+      <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-2xl shadow-primary-500/5 backdrop-blur-xl dark:border-white/10 dark:bg-dark-800/50">
         <slot />
       </div>
 
@@ -38,7 +38,7 @@
       </div>
 
       <!-- Copyright -->
-      <div class="mt-8 text-center text-xs text-dark-500">
+      <div class="mt-8 text-center text-xs text-gray-400 dark:text-dark-500">
         &copy; {{ currentYear }} {{ siteName }}. All rights reserved.
       </div>
     </div>

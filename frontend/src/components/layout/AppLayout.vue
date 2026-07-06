@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-dark-950">
+  <div class="min-h-screen bg-gray-50 dark:bg-dark-950">
     <!-- Animated Background -->
     <div class="pointer-events-none fixed inset-0 overflow-hidden">
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.06),transparent_60%),radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.04),transparent_60%)]"></div>
@@ -65,7 +65,7 @@ onMounted(() => {
 defineExpose({ replayTour })
 </script>
 
-<style>
+<style scoped>
 @keyframes bgFloat {
   0%, 100% { transform: translate(0, 0) scale(1); }
   25% { transform: translate(40px, -30px) scale(1.05); }
