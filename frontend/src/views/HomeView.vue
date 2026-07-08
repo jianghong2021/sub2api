@@ -50,6 +50,7 @@
           <span class="hidden text-sm font-semibold text-gray-900 sm:block dark:text-white">{{ siteName }}</span>
         </div>
         <div class="flex items-center gap-1.5">
+          <router-link to="/tutorial" class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-dark-400 dark:hover:bg-white/5 dark:hover:text-white" title="使用教程"><Icon name="lightbulb" size="md" /></router-link>
           <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-dark-400 dark:hover:bg-white/5 dark:hover:text-white" :title="t('home.viewDocs')"><Icon name="book" size="md" /></a>
           <!-- Theme Toggle -->
           <button
@@ -219,6 +220,7 @@
           <span class="text-xs text-gray-400 dark:text-dark-500">&copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}</span>
         </div>
         <div class="flex items-center gap-6">
+          <router-link to="/tutorial" class="text-xs text-gray-400 transition-colors hover:text-gray-900 dark:text-dark-500 dark:hover:text-white">使用教程</router-link>
           <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 transition-colors hover:text-gray-900 dark:text-dark-500 dark:hover:text-white">{{ t('home.docs') }}</a>
         </div>
       </div>

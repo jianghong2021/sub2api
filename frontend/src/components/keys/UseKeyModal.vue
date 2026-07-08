@@ -1004,7 +1004,7 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
       }
     }
   }
-
+  
   if (platform === 'gemini') {
     provider[platform].npm = '@ai-sdk/google'
     provider[platform].models = geminiModels
@@ -1021,6 +1021,12 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
   } else if (platform === 'openai') {
     provider[platform].models = openaiModels
   }
+
+  provider[platform].name = '大灰狼';
+
+  const temp = JSON.stringify(provider[platform]);
+  delete provider[platform];
+  provider['dahuilang'] = JSON.parse(temp);
 
   const agent =
     platform === 'openai'
