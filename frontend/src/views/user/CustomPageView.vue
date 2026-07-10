@@ -344,6 +344,13 @@ watch(markdownSlug, (slug) => {
 }, { immediate: true })
 
 onMounted(async () => {
+
+  if(embeddedUrl.value && embeddedUrl.value.startsWith('http')){
+    window.open(embeddedUrl.value, '_blank')
+    window.history.back()
+    return
+  }
+
   pageTheme.value = detectTheme()
 
   if (typeof document !== 'undefined') {
