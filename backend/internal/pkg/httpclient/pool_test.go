@@ -113,3 +113,33 @@ func TestValidatedTransport_ValidationErrorStopsRoundTrip(t *testing.T) {
 	require.ErrorIs(t, err, expectedErr)
 	require.Equal(t, int32(0), atomic.LoadInt32(&baseCalls))
 }
+
+func TestGetClient_DialTimeoutIsolatesPoolKeys(t *testing.T) {
+	c1, err := GetClient(Options{})
+	require.NoError(t, err)
+	c2, err := GetClient(Options{})
+	require.NoError(t, err)
+	require.Same(t, c1, c2, "identical options should reuse the same client")
+
+	c3, err := GetClient(Options{DialTimeout: 10 * time.Second})
+	require.NoError(t, err)
+	c4, err := GetClient(Options{DialTimeout: 10 * time.Second})
+	require.NoError(t, err)
+	require.Same(t, c3, c4, "identical DialTimeout should reuse the same client")
+
+	require.NotSame(t, c1, c3, "different DialTimeout must not share the pooled client")
+
+	c5, err := GetClient(Options{DialTimeout: 15 * time.Second})
+	require.NoError(t, err)
+	require.NotSame(t, c3, c5, "different DialTimeout values must be isolated")
+}
+
+func TestBuildTransport_AcceptsDialTimeout(t *testing.T) {
+	trDefault, err := buildTransport(Options{})
+	require.NoError(t, err)
+	require.NotNil(t, trDefault.DialContext)
+
+	trCustom, err := buildTransport(Options{DialTimeout: 7 * time.Second})
+	require.NoError(t, err)
+	require.NotNil(t, trCustom.DialContext)
+}

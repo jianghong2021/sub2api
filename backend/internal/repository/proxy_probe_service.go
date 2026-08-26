@@ -53,18 +53,23 @@ func NewProxyExitInfoProber(cfg *config.Config) service.ProxyExitInfoProber {
 }
 
 const (
-	defaultProxyProbeTimeout          = 10 * time.Second
+	defaultProxyProbeTimeout          = 20 * time.Second
 	defaultProxyProbeResponseMaxBytes = int64(1024 * 1024)
+	// proxyProbeDialTimeout 探测请求到代理的 TCP 建连超时。
+	// 网关上游建连超时为 10s（http_upstream.go defaultUpstreamDialTimeout），
+	// 部分 IP 代理建连耗时 5s~10s，探测沿用同一档位避免误判超时。
+	proxyProbeDialTimeout = 10 * time.Second
 )
 
 // probeURLs 按优先级排列的内置探测 URL 列表。
 // 某些 AI API 专用代理只允许访问特定域名，因此需要多个备选。
+// 统一使用 HTTPS，避免明文 HTTP 被代理拦截或限制。
 var probeURLs = []struct {
 	url    string
 	parser string
 }{
-	{"http://ip-api.com/json/?lang=zh-CN", "ip-api"},
-	{"http://api64.ipify.org?format=json", "ipify"},
+	{"https://api64.ipify.org?format=json", "ipify"},
+	{"https://chatgpt.com/cdn-cgi/trace", "chatgpt-trace"},
 }
 
 type configuredProbeTarget struct {
@@ -78,12 +83,15 @@ type proxyProbeService struct {
 	validateResolvedIP  bool
 	maxResponseBytes    int64
 	configuredProbeURLs []configuredProbeTarget
+	// fallbackProbeURLs 覆盖包级 probeURLs，仅测试注入用（正常为 nil）。
+	fallbackProbeURLs []configuredProbeTarget
 }
 
 func (s *proxyProbeService) ProbeProxy(ctx context.Context, proxyURL string) (*service.ProxyExitInfo, int64, error) {
 	client, err := httpclient.GetClient(httpclient.Options{
 		ProxyURL:           proxyURL,
 		Timeout:            defaultProxyProbeTimeout,
+		DialTimeout:        proxyProbeDialTimeout,
 		InsecureSkipVerify: s.insecureSkipVerify,
 		ValidateResolvedIP: s.validateResolvedIP,
 		AllowPrivateHosts:  s.allowPrivateHosts,
@@ -92,9 +100,11 @@ func (s *proxyProbeService) ProbeProxy(ctx context.Context, proxyURL string) (*s
 		return nil, 0, fmt.Errorf("failed to create proxy client: %w", err)
 	}
 
+	targets := s.probeURLs()
+
 	var lastErr error
-	if len(s.configuredProbeURLs) > 0 {
-		for _, probe := range s.configuredProbeURLs {
+	if len(targets) > 0 {
+		for _, probe := range targets {
 			exitInfo, latencyMs, err := s.probeWithURL(ctx, client, probe.url, probe.parser)
 			if err == nil {
 				return exitInfo, latencyMs, nil
@@ -113,6 +123,18 @@ func (s *proxyProbeService) ProbeProxy(ctx context.Context, proxyURL string) (*s
 	}
 
 	return nil, 0, fmt.Errorf("all probe URLs failed, last error: %w", lastErr)
+}
+
+// probeURLs 返回探测目标列表：配置注入优先（configuredProbeURLs），
+// 其次测试注入（fallbackProbeURLs），最后包级内置 probeURLs。
+func (s *proxyProbeService) probeURLs() []configuredProbeTarget {
+	if len(s.configuredProbeURLs) > 0 {
+		return s.configuredProbeURLs
+	}
+	if len(s.fallbackProbeURLs) > 0 {
+		return s.fallbackProbeURLs
+	}
+	return nil
 }
 
 func (s *proxyProbeService) probeWithURL(ctx context.Context, client *http.Client, url string, parser string) (*service.ProxyExitInfo, int64, error) {
