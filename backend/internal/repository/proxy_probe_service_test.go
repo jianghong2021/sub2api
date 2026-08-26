@@ -23,11 +23,6 @@ func (s *ProxyProbeServiceSuite) SetupTest() {
 	s.ctx = context.Background()
 	s.prober = &proxyProbeService{
 		allowPrivateHosts: true,
-		// 测试走本地假 HTTP 代理，注入旧的 HTTP 目标避免真实 HTTPS/CONNECT。
-		fallbackProbeURLs: []configuredProbeTarget{
-			{url: "http://ip-api.com/json/?lang=zh-CN", parser: "ip-api"},
-			{url: "http://api64.ipify.org?format=json", parser: "ipify"},
-		},
 	}
 }
 
