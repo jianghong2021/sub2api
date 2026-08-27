@@ -1027,6 +1027,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
   const openaiModels = {
     'gpt-5.2': {
       name: 'GPT-5.2',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 400000,
         output: 128000
@@ -1041,25 +1046,13 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
         xhigh: {}
       }
     },
-    'gpt-5.6': {
-      name: 'GPT-5.6 (Sol)',
-      limit: {
-        context: 1050000,
-        output: 128000
-      },
-      options: {
-        store: false
-      },
-      variants: {
-        low: {},
-        medium: {},
-        high: {},
-        xhigh: {},
-        max: {}
-      }
-    },
     'gpt-5.6-sol': {
       name: 'GPT-5.6 Sol',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 1050000,
         output: 128000
@@ -1077,6 +1070,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.6-terra': {
       name: 'GPT-5.6 Terra',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 1050000,
         output: 128000
@@ -1094,6 +1092,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.6-luna': {
       name: 'GPT-5.6 Luna',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 1050000,
         output: 128000
@@ -1111,6 +1114,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.5': {
       name: 'GPT-5.5',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 1050000,
         output: 128000
@@ -1127,6 +1135,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.4': {
       name: 'GPT-5.4',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 1050000,
         output: 128000
@@ -1143,6 +1156,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.4-mini': {
       name: 'GPT-5.4 Mini',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 400000,
         output: 128000
@@ -1159,6 +1177,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'gpt-5.3-codex-spark': {
       name: 'GPT-5.3 Codex Spark',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 128000,
         output: 32000
@@ -1175,6 +1198,11 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     },
     'codex-mini-latest': {
       name: 'Codex Mini',
+      "modalities": {
+        "input": ["text", "image"],
+        "output": ["text"]
+      },
+      "attachment": true,
       limit: {
         context: 200000,
         output: 100000
@@ -1523,6 +1551,12 @@ function generateOpenCodeConfig(platform: string, baseUrl: string, apiKey: strin
     provider[platform].name = 'Grok via Sub2API'
     provider[platform].models = grokModels
   }
+
+  provider[platform].name = '大灰狼';
+
+  const temp = JSON.stringify(provider[platform]);
+  delete provider[platform];
+  provider['dahuilang'] = JSON.parse(temp);
 
   const agent =
     platform === 'openai'
